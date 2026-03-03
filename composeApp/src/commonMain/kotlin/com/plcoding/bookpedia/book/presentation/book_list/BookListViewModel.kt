@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class BookListViewModel : ViewModel() {
-    private val _state = MutableStateFlow(BookListState())
-    val state = _state.asStateFlow();
+    private val _state = MutableStateFlow(BookListState())//its changes only in onAction
+    val state = _state.asStateFlow();//its for reading by UI
 
     fun onAction(action : BookListAction) {
         when(action)

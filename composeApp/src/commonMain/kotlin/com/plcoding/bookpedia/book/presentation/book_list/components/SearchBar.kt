@@ -24,7 +24,7 @@ import com.plcoding.bookpedia.core.presentation.SandYellow
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun BookSearchBar(
+fun BookSearchBar( //reusable UI component
     searchQuery : String,
     onSearchQueryChange: (String) -> Unit,
     onImeSearch : () -> Unit,

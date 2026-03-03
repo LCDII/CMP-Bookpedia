@@ -4,7 +4,7 @@ import com.plcoding.bookpedia.book.domain.Book
 import com.plcoding.bookpedia.core.presentation.UiText
 
 
-data class BookListState(
+data class BookListState(//Just all variables we use while BookList layer is working
     val searchQuery: String = "Kotlin",
     val searchResult: List<Book> = emptyList(),
     val favoriteBooks : List<Book> = emptyList(),

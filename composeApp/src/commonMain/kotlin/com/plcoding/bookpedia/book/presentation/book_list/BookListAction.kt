@@ -3,7 +3,7 @@ package com.plcoding.bookpedia.book.presentation.book_list
 import com.plcoding.bookpedia.book.domain.Book
 
 
-sealed interface BookListAction {
+sealed interface BookListAction { //fixed variants of what can user do with BookList
     data class OnSearchQueryChange(val query : String): BookListAction
     data class OnBookClick(val book: Book) : BookListAction
     data class OnTabSelected(val index: Int) : BookListAction
