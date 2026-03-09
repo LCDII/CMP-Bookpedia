@@ -6,7 +6,7 @@ data class Book(
     val title: String,
     val imageURL: String,
     val authors : List<String>,
-    val description : String,
+    val description : String?,
     val languages : List<String>,
     val publishedYear : String?,
     val averageRating : Double?, //? stands for null, because not every book has rating

@@ -53,7 +53,9 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun BookListScreenRoot(//knows about view model
 
-    viewModel: BookListViewModel = koinViewModel(),
+    viewModel: BookListViewModel = koinViewModel(), //val viewModel = Koin.get<BookListViewModel>() - same
+    //koin - container with rules
+
     onBookClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

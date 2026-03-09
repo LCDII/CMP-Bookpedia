@@ -4,4 +4,10 @@
     <string name="search_results">Search results</string>
     <string name="favorites">Favorites</string>
     <string name="no_search_result">Nothing to show</string>
+    <string name="error_disk_full">Your disk is Full</string>
+    <string name="error_unknown">Something went wrong</string>
+    <string name="error_request_timeout">The request timed out</string>
+    <string name="error_no_internet">Internet connection is bad</string>
+    <string name="error_too_many_requests">Your quota seemed to be exceeded</string>
+    <string name="error_serialization">Coludn't parse data</string>
 </resources>
