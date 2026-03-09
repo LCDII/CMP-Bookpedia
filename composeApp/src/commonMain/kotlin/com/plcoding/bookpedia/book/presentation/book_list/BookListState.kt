@@ -7,7 +7,7 @@ val books = (1..100).map {
     Book(
         id = it.toString(),
         title = "Book $it",
-        imageURL = "https://not working.com",
+        imageURL = "https://notworking.com",
         authors = listOf("LevPiskunov"),
         description = "Description $it",
         languages = emptyList(),
@@ -20,9 +20,9 @@ val books = (1..100).map {
 }
 data class BookListState(//Just all variables we use while BookList layer is working
     val searchQuery: String = "Kotlin",
-    val searchResult: List<Book> = books,
+    val searchResult: List<Book> = emptyList(),
     val favoriteBooks : List<Book> = emptyList(),
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val selectedTabIndex: Int = 0,
     val errorMessage: UiText? = null
 )

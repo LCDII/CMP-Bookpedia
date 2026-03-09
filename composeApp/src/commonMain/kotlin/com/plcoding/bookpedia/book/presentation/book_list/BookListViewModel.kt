@@ -69,7 +69,7 @@ class BookListViewModel(
             .distinctUntilChanged()
             .debounce(500L)
             .onEach { query ->
-                when(query){
+                when{
                     query.isBlank() -> {
                         _state.update { it.copy(
                             errorMessage = null,
