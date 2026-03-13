@@ -53,16 +53,22 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun BookListScreenRoot(//knows about view model
 
-    viewModel: BookListViewModel = koinViewModel(), //val viewModel = Koin.get<BookListViewModel>() - same
+    viewModel: BookListViewModel = koinViewModel<BookListViewModel>(), //val viewModel = Koin.get<BookListViewModel>() - same
     //koin - container with rules
 
-    onBookClick: () -> Unit,
+    onBookClick: (Book) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()//subscription Flow on State, when it changed UI changes
     BookListScreen(
         state = state,
-        onAction = viewModel::onAction//lambda
+        onAction = { action ->
+            when(action) {
+                is BookListAction.OnBookClick -> onBookClick(action.book)
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        }
     )
 }
 
@@ -270,13 +276,13 @@ private fun BookListScreen(//just for UI
 //    )
 //}
 
-@Preview
-@Composable
-private fun BookListScreenPreview() {
-    BookListScreen(
-        state = BookListState(
-            searchResult = books,
-        ),
-        onAction = { }
-    )
-}
+//@Preview
+//@Composable
+//private fun BookListScreenPreview() {
+//    BookListScreen(
+//        state = BookListState(
+//            searchResult = books,
+//        ),
+//        onAction = { }
+//    )
+//}
