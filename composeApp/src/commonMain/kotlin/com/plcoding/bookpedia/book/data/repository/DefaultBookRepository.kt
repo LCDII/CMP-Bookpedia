@@ -19,4 +19,12 @@ class DefaultBookRepository (
                 dto.results.map { it.toBook() }
             }//we receive SearchResponseDto and need List<Book> out of it, we use extension fun from Result.kt and toBook from BookMappers
     }
+
+    override suspend fun getBookDescription(bookId: String): Result<String?, DataError> {
+        return remoteBookDataSource
+            .getBookDetails(bookId)
+            .map { it.description }
+    }
+
+
 }
