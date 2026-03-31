@@ -1,7 +1,6 @@
 package com.plcoding.bookpedia.book.presentation.book_list
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,15 +28,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.AlignmentLine
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cmp_bookpedia.composeapp.generated.resources.Res
 import cmp_bookpedia.composeapp.generated.resources.favorites
-import cmp_bookpedia.composeapp.generated.resources.no_search_result
+import cmp_bookpedia.composeapp.generated.resources.no_favorite_books
+import cmp_bookpedia.composeapp.generated.resources.no_search_results
 import cmp_bookpedia.composeapp.generated.resources.search_results
 import com.plcoding.bookpedia.book.domain.Book
 import com.plcoding.bookpedia.book.presentation.book_list.components.BookList
@@ -46,20 +44,15 @@ import com.plcoding.bookpedia.core.presentation.DarkBlue
 import com.plcoding.bookpedia.core.presentation.DesertWhite
 import com.plcoding.bookpedia.core.presentation.SandYellow
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
-//CONATINER
 @Composable
-fun BookListScreenRoot(//knows about view model
-
-    viewModel: BookListViewModel = koinViewModel<BookListViewModel>(), //val viewModel = Koin.get<BookListViewModel>() - same
-    //koin - container with rules
-
+fun BookListScreenRoot(
+    viewModel: BookListViewModel = koinViewModel(),
     onBookClick: (Book) -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()//subscription Flow on State, when it changed UI changes
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
     BookListScreen(
         state = state,
         onAction = { action ->
@@ -72,51 +65,46 @@ fun BookListScreenRoot(//knows about view model
     )
 }
 
-//CONTENT
-//its isolated and can be reused
 @Composable
-private fun BookListScreen(//just for UI
-    state: BookListState, // it doesnt Know it depends on viewmodel, its just State
-    onAction : (BookListAction)  -> Unit,
-    modifier: Modifier = Modifier
+fun BookListScreen(
+    state: BookListState,
+    onAction: (BookListAction) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+
     val pagerState = rememberPagerState { 2 }
     val searchResultsListState = rememberLazyListState()
-    val favoritesListState = rememberLazyListState()
+    val favoriteBooksListState = rememberLazyListState()
 
-
-    LaunchedEffect(state.searchResult)
-    {
+    LaunchedEffect(state.searchResults) {
         searchResultsListState.animateScrollToItem(0)
     }
 
-    LaunchedEffect(state.selectedTabIndex)
-    {
+    LaunchedEffect(state.selectedTabIndex) {
         pagerState.animateScrollToPage(state.selectedTabIndex)
     }
 
     LaunchedEffect(pagerState.currentPage) {
-            onAction(BookListAction.OnTabSelected(pagerState.currentPage))
+        onAction(BookListAction.OnTabSelected(pagerState.currentPage))
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(DarkBlue)
             .statusBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
-    )
-    {
+    ) {
         BookSearchBar(
             searchQuery = state.searchQuery,
             onSearchQueryChange = {
-                onAction(BookListAction.OnSearchQueryChange(it)) //query: String -> onAction(BookListAction.OnSearchQueryChange(query)
+                onAction(BookListAction.OnSearchQueryChange(it))
             },
             onImeSearch = {
                 keyboardController?.hide()
             },
-            modifier = Modifier.
-                widthIn(max = 400.dp)
+            modifier = Modifier
+                .widthIn(max = 400.dp)
                 .fillMaxWidth()
                 .padding(16.dp)
         )
@@ -153,8 +141,7 @@ private fun BookListScreen(//just for UI
                         onClick = {
                             onAction(BookListAction.OnTabSelected(0))
                         },
-                        modifier = Modifier
-                            .weight(1f),
+                        modifier = Modifier.weight(1f),
                         selectedContentColor = SandYellow,
                         unselectedContentColor = Color.Black.copy(alpha = 0.5f)
                     ) {
@@ -169,8 +156,7 @@ private fun BookListScreen(//just for UI
                         onClick = {
                             onAction(BookListAction.OnTabSelected(1))
                         },
-                        modifier = Modifier
-                            .weight(1f),
+                        modifier = Modifier.weight(1f),
                         selectedContentColor = SandYellow,
                         unselectedContentColor = Color.Black.copy(alpha = 0.5f)
                     ) {
@@ -191,14 +177,11 @@ private fun BookListScreen(//just for UI
                     Box(
                         modifier = Modifier
                             .fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-
+                        contentAlignment = Alignment.Center
                     ) {
-                        when(pageIndex)
-                        {
+                        when(pageIndex) {
                             0 -> {
-                                if(state.isLoading)
-                                {
+                                if(state.isLoading) {
                                     CircularProgressIndicator()
                                 } else {
                                     when {
@@ -210,18 +193,17 @@ private fun BookListScreen(//just for UI
                                                 color = MaterialTheme.colorScheme.error
                                             )
                                         }
-                                        state.searchResult.isEmpty() -> {
+                                        state.searchResults.isEmpty() -> {
                                             Text(
-                                                text = stringResource(Res.string.no_search_result),
+                                                text = stringResource(Res.string.no_search_results),
                                                 textAlign = TextAlign.Center,
                                                 style = MaterialTheme.typography.headlineSmall,
                                                 color = MaterialTheme.colorScheme.error
                                             )
                                         }
-                                        else ->
-                                        {
+                                        else -> {
                                             BookList(
-                                                books = state.searchResult,
+                                                books = state.searchResults,
                                                 onBookClick = {
                                                     onAction(BookListAction.OnBookClick(it))
                                                 },
@@ -232,23 +214,21 @@ private fun BookListScreen(//just for UI
                                     }
                                 }
                             }
-                            1 ->
-                            {
-                                if(state.favoriteBooks.isEmpty())
-                                {
+                            1 -> {
+                                if(state.favoriteBooks.isEmpty()) {
                                     Text(
-                                        text = stringResource(Res.string.no_search_result),
+                                        text = stringResource(Res.string.no_favorite_books),
                                         textAlign = TextAlign.Center,
-                                        style = MaterialTheme.typography.headlineSmall
+                                        style = MaterialTheme.typography.headlineSmall,
                                     )
                                 } else {
                                     BookList(
-                                        books = state.searchResult,
+                                        books = state.favoriteBooks,
                                         onBookClick = {
                                             onAction(BookListAction.OnBookClick(it))
                                         },
                                         modifier = Modifier.fillMaxSize(),
-                                        scrollState = favoritesListState
+                                        scrollState = favoriteBooksListState
                                     )
                                 }
                             }
@@ -259,30 +239,3 @@ private fun BookListScreen(//just for UI
         }
     }
 }
-
-//private val books = (1..100).map {
-//    Book(
-//        id = it.toString(),
-//        title = "Book $it",
-//        imageURL = "https://not working.com",
-//        authors = listOf("LevPiskunov"),
-//        description = "Description $it",
-//        languages = emptyList(),
-//        publishedYear = null,
-//        averageRating = 4.5,
-//        ratingCount = 5,
-//        numberOfPages = 300,
-//        numberOfEditions = 2
-//    )
-//}
-
-//@Preview
-//@Composable
-//private fun BookListScreenPreview() {
-//    BookListScreen(
-//        state = BookListState(
-//            searchResult = books,
-//        ),
-//        onAction = { }
-//    )
-//}

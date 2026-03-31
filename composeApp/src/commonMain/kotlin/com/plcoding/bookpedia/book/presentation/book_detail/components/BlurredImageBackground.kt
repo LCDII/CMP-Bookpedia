@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,13 +42,13 @@ import androidx.compose.ui.unit.dp
 import cmp_bookpedia.composeapp.generated.resources.Res
 import cmp_bookpedia.composeapp.generated.resources.book_cover
 import cmp_bookpedia.composeapp.generated.resources.book_error_2
-import cmp_bookpedia.composeapp.generated.resources.favorites
 import cmp_bookpedia.composeapp.generated.resources.go_back
 import cmp_bookpedia.composeapp.generated.resources.mark_as_favorite
 import cmp_bookpedia.composeapp.generated.resources.remove_from_favorites
 import coil3.compose.rememberAsyncImagePainter
 import com.plcoding.bookpedia.core.presentation.DarkBlue
 import com.plcoding.bookpedia.core.presentation.DesertWhite
+import com.plcoding.bookpedia.core.presentation.PulseAnimation
 import com.plcoding.bookpedia.core.presentation.SandYellow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -57,46 +60,47 @@ fun BlurredImageBackground(
     onFavoriteClick: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    content : @Composable ()  -> Unit
+    content: @Composable () -> Unit
 ) {
     var imageLoadResult by remember {
         mutableStateOf<Result<Painter>?>(null)
     }
     val painter = rememberAsyncImagePainter(
-        model=imageUrl,
+        model = imageUrl,
         onSuccess = {
             val size = it.painter.intrinsicSize
-            imageLoadResult = if (size.width > 1 && size.height > 1) {
+            imageLoadResult = if(size.width > 1 && size.height > 1) {
                 Result.success(it.painter)
             } else {
-                Result.failure(Exception("Invalid image"))
+                Result.failure(Exception("Invalid image dimensions"))
             }
+        },
+        onError = {
+            it.result.throwable.printStackTrace()
         }
     )
 
     Box(modifier = modifier) {
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-
         ) {
             Box(
                 modifier = Modifier
                     .weight(0.3f)
                     .fillMaxWidth()
-                    .background((DarkBlue))
+                    .background(DarkBlue)
             ) {
-                imageLoadResult?.getOrNull()?.let{ painter ->
-                    Image(
-                        painter = painter,
-                        contentDescription = stringResource(Res.string.book_cover),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .blur(20.dp)
-                        )
-                }
+                Image(
+                    painter = painter,
+                    contentDescription = stringResource(Res.string.book_cover),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .blur(20.dp)
+                )
             }
+
             Box(
                 modifier = Modifier
                     .weight(0.7f)
@@ -119,32 +123,39 @@ fun BlurredImageBackground(
             )
         }
 
-        Column (
+        Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
             Spacer(modifier = Modifier.fillMaxHeight(0.15f))
             ElevatedCard(
                 modifier = Modifier
-                    .width(200.dp)
-                    .aspectRatio(2/3f),
+                    .height(230.dp)
+                    .aspectRatio(2 / 3f),
                 shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.elevatedCardColors(
-                    containerColor = Color.Transparent
-                ),
                 elevation = CardDefaults.elevatedCardElevation(
-                    15.dp
+                    defaultElevation = 15.dp
                 )
             ) {
                 AnimatedContent(
                     targetState = imageLoadResult
                 ) { result ->
                     when(result) {
-                        null -> CircularProgressIndicator()
+                        null -> Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            PulseAnimation(
+                                modifier = Modifier
+                                    .size(60.dp)
+                            )
+                        }
                         else -> {
                             Box {
                                 Image(
-                                    painter = if(result.isSuccess) painter else painterResource(Res.drawable.book_error_2),
+                                    painter = if(result.isSuccess) painter else {
+                                        painterResource(Res.drawable.book_error_2)
+                                    },
                                     contentDescription = stringResource(Res.string.book_cover),
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -155,7 +166,6 @@ fun BlurredImageBackground(
                                         ContentScale.Fit
                                     }
                                 )
-
                                 IconButton(
                                     onClick = onFavoriteClick,
                                     modifier = Modifier

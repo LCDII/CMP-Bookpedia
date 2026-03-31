@@ -5,7 +5,7 @@ import androidx.compose.ui.window.application
 import com.plcoding.bookpedia.app.App
 import com.plcoding.bookpedia.di.initKoin
 
-fun main(){
+fun main() {
     initKoin()
     application {
         Window(

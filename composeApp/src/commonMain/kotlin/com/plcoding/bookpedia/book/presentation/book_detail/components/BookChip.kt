@@ -15,11 +15,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.plcoding.bookpedia.core.presentation.LightBlue
 
-enum class ChipSize{
+enum class ChipSize {
     SMALL, REGULAR
 }
 
-//pretty flexible
 @Composable
 fun BookChip(
     modifier: Modifier = Modifier,
@@ -27,8 +26,8 @@ fun BookChip(
     chipContent: @Composable RowScope.() -> Unit
 ) {
     Box(
-        modifier = Modifier.
-            widthIn(
+        modifier = modifier
+            .widthIn(
                 min = when(size) {
                     ChipSize.SMALL -> 50.dp
                     ChipSize.REGULAR -> 80.dp
@@ -45,7 +44,6 @@ fun BookChip(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
-
         ) {
             chipContent()
         }

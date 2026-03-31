@@ -5,11 +5,12 @@ import com.plcoding.bookpedia.book.domain.Book
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class SelectedBookViewModel: ViewModel() { //shared data to selected book
+class SelectedBookViewModel: ViewModel() {
+
     private val _selectedBook = MutableStateFlow<Book?>(null)
     val selectedBook = _selectedBook.asStateFlow()
 
-    fun onSelectBook(book : Book?) {
+    fun onSelectBook(book: Book?) {
         _selectedBook.value = book
     }
 }

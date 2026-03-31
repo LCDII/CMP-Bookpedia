@@ -16,31 +16,21 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.decodeFromJsonElement
 
 object BookWorkDtoSerializer: KSerializer<BookWorkDto> {
+
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor(
         BookWorkDto::class.simpleName!!
     ) {
-        element<String?>("description")//id = 0
-        //another eleme id = 1
+        element<String?>("description")
     }
 
-    //do not need
-    override fun serialize(
-        encoder: Encoder,
-        value: BookWorkDto
-    ) = encoder.encodeStructure(descriptor){
-        value.description?.let {
-            encodeStringElement(descriptor, 0, it)
-        }
-    }
-
-    override fun deserialize(decoder: Decoder): BookWorkDto = decoder.decodeStructure(descriptor){
+    override fun deserialize(decoder: Decoder): BookWorkDto = decoder.decodeStructure(descriptor) {
         var description: String? = null
 
-        while (true) {
-            when (val index = decodeElementIndex(descriptor)) {
+        while(true) {
+            when(val index = decodeElementIndex(descriptor)) {
                 0 -> {
                     val jsonDecoder = decoder as? JsonDecoder ?: throw SerializationException(
-                            "This decoder only works with JSON"
+                        "This decoder only works with JSON."
                     )
                     val element = jsonDecoder.decodeJsonElement()
                     description = if(element is JsonObject) {
@@ -48,16 +38,23 @@ object BookWorkDtoSerializer: KSerializer<BookWorkDto> {
                             element = element,
                             deserializer = DescriptionDto.serializer()
                         ).value
-                    } else if(element is JsonPrimitive && element.isString){
+                    } else if(element is JsonPrimitive && element.isString) {
                         element.content
                     } else null
                 }
-
                 CompositeDecoder.DECODE_DONE -> break
-                else -> throw SerializationException("Unexpected  index $index")
+                else -> throw SerializationException("Unexpected index $index")
             }
         }
+
         return@decodeStructure BookWorkDto(description)
     }
 
+    override fun serialize(encoder: Encoder, value: BookWorkDto) = encoder.encodeStructure(
+        descriptor
+    ) {
+        value.description?.let {
+            encodeStringElement(descriptor, 0, it)
+        }
+    }
 }

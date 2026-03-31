@@ -16,27 +16,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import cmp_bookpedia.composeapp.generated.resources.Res
 import cmp_bookpedia.composeapp.generated.resources.close_hint
 import cmp_bookpedia.composeapp.generated.resources.search_hint
-import com.plcoding.bookpedia.book.presentation.book_list.BookListAction
 import com.plcoding.bookpedia.core.presentation.DarkBlue
 import com.plcoding.bookpedia.core.presentation.DesertWhite
 import com.plcoding.bookpedia.core.presentation.SandYellow
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun BookSearchBar( //reusable UI component
-    searchQuery : String,
+fun BookSearchBar(
+    searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
-    onImeSearch : () -> Unit,
+    onImeSearch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     CompositionLocalProvider(
@@ -44,14 +45,14 @@ fun BookSearchBar( //reusable UI component
             handleColor = SandYellow,
             backgroundColor = SandYellow
         )
-    ){
+    ) {
         OutlinedTextField(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
-            shape = RoundedCornerShape(90),
+            shape = RoundedCornerShape(100),
             colors = OutlinedTextFieldDefaults.colors(
                 cursorColor = DarkBlue,
-                focusedBorderColor = SandYellow,
+                focusedBorderColor = SandYellow
             ),
             placeholder = {
                 Text(
@@ -78,7 +79,7 @@ fun BookSearchBar( //reusable UI component
             trailingIcon = {
                 AnimatedVisibility(
                     visible = searchQuery.isNotBlank()
-                ){
+                ) {
                     IconButton(
                         onClick = {
                             onSearchQueryChange("")
@@ -92,11 +93,12 @@ fun BookSearchBar( //reusable UI component
                     }
                 }
             },
-            modifier = modifier.background(
-                shape = RoundedCornerShape(100),
-                color = DesertWhite
-            ).minimumInteractiveComponentSize()
+            modifier = modifier
+                .background(
+                    shape = RoundedCornerShape(100),
+                    color = DesertWhite
+                )
+                .minimumInteractiveComponentSize()
         )
     }
-
 }

@@ -13,11 +13,11 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-
 object HttpClientFactory {
-    fun create(engine: HttpClientEngine) : HttpClient {
+
+    fun create(engine: HttpClientEngine): HttpClient {
         return HttpClient(engine) {
-            install(ContentNegotiation){
+            install(ContentNegotiation) {
                 json(
                     json = Json {
                         ignoreUnknownKeys = true
