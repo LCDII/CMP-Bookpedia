@@ -63,7 +63,7 @@ fun BookSearchBar(
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.66f)
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             singleLine = true,
